@@ -1,5 +1,6 @@
 package Core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class User {
@@ -15,21 +16,28 @@ public class User {
         this.id = id;
         this.name = name;
         this.email = email;
+        this.password = password;
         this.cart = new Cart();
+        this.orders = new ArrayList<>();
     }
-
     public int getId(){
         return this.id;
+    }
+    public String getName(){
+        return this.name;
     }
     public boolean verifyPassword(String password) {
         return password.equals(this.password);
     }
 
-    public void addOrder(){
-
+    public void addOrder(Order order){
+        this.orders.add(order);
     }
 
     public Cart getCart(){
         return this.cart;
+    }
+    public List<Order> getOrders(){
+        return this.orders;
     }
 }

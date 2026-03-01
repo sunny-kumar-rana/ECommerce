@@ -1,9 +1,10 @@
 package Core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Cart {
-    private List<CartItem> items;
+    private List<CartItem> items = new ArrayList<>();
 
     public List<CartItem> getCartItems(){
         return this.items;
@@ -13,8 +14,8 @@ public class Cart {
     }
     public void removeProduct(CartItem item) {
         for(CartItem ci : items){
-            if(ci.getProduct() == item.getProduct()){
-                items.remove(item);
+            if(ci.getProduct().getId() == item.getProduct().getId()){
+                items.remove(ci);
             }
         }
     }

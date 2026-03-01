@@ -14,7 +14,7 @@ public class Order {
     public Order(int id, User user, Cart cart) {
         this.orderId = id;
         this.user = user;
-        this.items = cart.getCartItems();
+        this.items = new ArrayList<>(cart.getCartItems());
         this.totalAmount = calculateTotal();
         this.orderDate = LocalDateTime.now();
     }
@@ -25,6 +25,11 @@ public class Order {
             total += item.subTotal();
         }
         return total;
+    }
+    public void printOrder(){
+        System.out.println("Order ID >> "+orderId+"        Date >> "+orderDate+"\nUser Name >> "+user.getName());
+        items.forEach(System.out::println);
+        System.out.println("\nTotal Amount >> "+this.totalAmount);
     }
 
     public LocalDateTime getOrderDate() {

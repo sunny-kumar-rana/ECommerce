@@ -3,6 +3,7 @@ package Service;
 import Core.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ECommerceSystem {
@@ -10,22 +11,43 @@ public class ECommerceSystem {
     List<Product> products;
     List<Order> orders;
 
+    public ECommerceSystem(){
+        this.users = new ArrayList<>();
+        this.products = new ArrayList<>();
+        this.orders = new ArrayList<>();
+        users.add(new User(0,"Superior","Superior@gmail.com","yoyo"));
+    }
+
+
+    // Users Methods
     public void registerUser(User user){
         users.add(user);
     }
-    private User findUser(int id){
+    private User findUser(int id) throws IllegalAccessException {
         for(User u : users){
             if(u.getId() == id){
                 return u;
             }
         }
-        return null;
+        throw new IllegalAccessException("no such user Exists");
     }
-    public void login(String username, String password){
+    public User login(String username, String password) throws IllegalAccessException {
+        User user = null;
+        for(User u : users){
+            if(u.getName().equalsIgnoreCase(username.trim()) && u.verifyPassword(password)){
+                return user = u;
+            }
+        }
+        throw new IllegalAccessException("Incorrect UserName/Password");
     }
 
-    public void addProduct(Product product){
-        products.add(product);
+    //Product Methods
+    public boolean addProduct(User user, Product product){
+        if(user.getId() == 0){
+            products.add(product);
+            return true;
+        }
+        return false;
     }
     public void removeProduct(Product product){
         products.remove(product);
@@ -39,24 +61,56 @@ public class ECommerceSystem {
         }
         return prods;
     }
-
-    public void addToCart(int userId, Product product, int quantity){
-        User user = findUser(userId);
-        if (user != null) {
-            user.getCart().addProduct(new CartItem(product,quantity));
+    public Product searchProduct(int productId){
+        Product prods = null;
+        for(Product p : products){
+            if(p.getId() == productId){
+                prods = p;
+            }
         }
+        return prods;
     }
-    public void removeFromCart(int userId, Product product, int quantity){
-        User user = findUser(userId);
-        if (user != null) {
-            user.getCart().removeProduct(new CartItem(product,quantity));
-        }
+    public List<Product> getAllProducts(){
+        return new ArrayList<Product>(products);
     }
 
-    public void placeOrder(int orderId, int userId){
-        User user = findUser(userId);
-        if (user != null) {
-            orders.add(new Order(orderId, user, user.getCart()));
+    //Cart Operations
+    public void addToCart(User user, Product product, int quantity) throws IllegalAccessException {
+        if(!product.isAvailable(quantity)){
+            throw new IllegalStateException("Not in Stock right now");
         }
+        user.getCart().addProduct(new CartItem(product, quantity));
+    }
+    public void removeFromCart(User user, Product product, int quantity) throws IllegalAccessException {
+        user.getCart().removeProduct(new CartItem(product, quantity));
+    }
+    public Cart viewCart(User user){
+        return user.getCart();
+    }
+
+    //Order Placements
+    public void placeOrder(int orderId, User user) throws IllegalAccessException {
+        Cart cart = user.getCart();
+        if(user.getCart().getCartItems().isEmpty()){
+            throw new IllegalStateException("Cart is Empty");
+        }
+        for(CartItem ci : cart.getCartItems()){
+            Product p = ci.getProduct();
+            if (!p.isAvailable(ci.getQuantity())){
+                throw new IllegalStateException("Not in Stock");
+            }
+        }
+        for(CartItem ci : cart.getCartItems()){
+            ci.getProduct().reduceStock(ci.getQuantity());
+        }
+        Order order = new Order(orderId, user, user.getCart());
+        orders.add(order);
+        user.addOrder(order);
+        cart.clearCart();
+        order.printOrder();
+    }
+
+    public void printOrders(User user) {
+        user.getOrders().forEach(System.out::println);
     }
 }
