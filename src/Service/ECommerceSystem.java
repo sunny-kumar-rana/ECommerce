@@ -66,6 +66,7 @@ public class ECommerceSystem {
         for(Product p : products){
             if(p.getId() == productId){
                 prods = p;
+                break;
             }
         }
         return prods;
@@ -111,6 +112,6 @@ public class ECommerceSystem {
     }
 
     public void printOrders(User user) {
-        user.getOrders().forEach(System.out::println);
+        user.getOrders().forEach(Order::printOrder);
     }
 }

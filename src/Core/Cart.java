@@ -16,6 +16,7 @@ public class Cart {
         for(CartItem ci : items){
             if(ci.getProduct().getId() == item.getProduct().getId()){
                 items.remove(ci);
+                break;
             }
         }
     }

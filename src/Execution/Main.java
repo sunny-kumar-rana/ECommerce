@@ -80,7 +80,7 @@ public class Main {
                 }
                 case 4 -> {
                     List<Product> allProducts = ecs.getAllProducts();
-                    allProducts.forEach(product -> System.out.println(product));
+                    allProducts.forEach(System.out::println);
                 }
                 case 5 -> {
                     if(user != null){
@@ -133,6 +133,8 @@ public class Main {
                     }else {
                         try {
                             ecs.placeOrder(orderId, user);
+                            System.out.println("Order Placed SuccessFully!");
+                            orderId++;
                         } catch (IllegalAccessException e) {
                             System.out.println(e);
                         }
